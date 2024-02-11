@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .gr-1 {
+    @apply bg-gradient-to-r from-blue-400 to-blue-500;
+  }
+
+  .bottom-box {
+    @apply fixed z-50 inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-200 to-transparent;
+  }
+}
