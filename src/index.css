@@ -1,13 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    /* background-color: rgb(60, 63, 67) */
+  }
+}
+
 @layer components {
   .gr-1 {
-    @apply bg-gradient-to-r from-blue-400 to-blue-500;
+    @apply bg-gradient-to-br from-blue-400 to-blue-500;
   }
 
   .bottom-box {
-    @apply fixed z-50 inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-200 to-transparent;
+    @apply pointer-events-none fixed z-30 inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-200 to-transparent animate-show dark:from-slate-800;
   }
+}
+
+@layer utilities {
+  .flex-center-1 {
+    @apply flex items-center gap-x-1;
+  }
+
+  .flex-center-2 {
+    @apply flex items-center gap-x-2;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 0.3rem;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-500;
+  border-radius: 1rem;
 }
