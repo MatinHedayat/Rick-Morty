@@ -1,32 +1,24 @@
-import Layout from '../components/Layout';
-import { useFavorites } from '../contexts/FavoritesProvider';
-
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
-
-import { IoMdArrowBack } from 'react-icons/io';
-import { MdFavorite } from 'react-icons/md';
-
+import Icon from './Icon';
 import { useThemeMode } from '../contexts/ThemeModeProvider';
+import useFetchData from '../hooks/useFetchData';
+import { useFavorites } from '../contexts/FavoritesProvider';
+import Logo from './Logo';
 
 import { BsBoxArrowInRight } from 'react-icons/bs';
 import { BiSolidMoviePlay } from 'react-icons/bi';
+import { ImQuestion } from 'react-icons/im';
+import { MdFavorite } from 'react-icons/md';
+
+import { useEffect } from 'react';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Icon from '../components/Icon';
-import useFetchData from '../hooks/useFetchData';
-import { useEffect } from 'react';
+import { Button } from '@mui/material';
 
-export default function Character() {
-  const { character, parentComponent } = useLocation().state;
+export default function CharacterDetail({ character }) {
   const { theme } = useThemeMode();
-
-  const { favorites, setFavorites } = useFavorites();
-  const charIsFav = favorites.some((fav) => fav.id === character.id);
-
   const episodeIds =
     character && character.episode.map((episode) => episode.split('/').pop());
 
@@ -34,17 +26,18 @@ export default function Character() {
     `episode/${episodeIds}`
   );
 
-  useEffect(() => {
-    character && fetchData();
-  }, [character]);
-
+  const { favorites, setFavorites } = useFavorites();
+  const charIsFav =
+    character && favorites.some((fav) => fav.id === character.id);
   const handleSetFavorites = () => {
     if (charIsFav)
       setFavorites(favorites.filter((fav) => fav.id !== character.id));
     else setFavorites([...favorites, character]);
   };
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    character && fetchData();
+  }, [character]);
 
   const accordionSummary = {
     width: 'max-content',
@@ -60,61 +53,40 @@ export default function Character() {
   };
 
   return (
-    <Layout>
+    <div className='w-4/6 p-4 border-2 border-slate-500 rounded-xl'>
       {!character ? (
-        ''
+        <div className='h-full flex flex-col items-center justify-center gap-4'>
+          <p
+            className={`w-4/6 text-center font-semibold flex items-center gap-x-4 ${
+              theme === 'light' ? 'text-slate-600' : 'text-slate-300'
+            }`}
+          >
+            Select one of the characters from the left side to see more details
+            about it ...
+          </p>
+          <Logo
+            width={100}
+            height={100}
+            fill={`${theme === 'light' ? '#475569' : '#cbd5e1'}`}
+          />
+        </div>
       ) : (
-        <div className='mt-8'>
-          <div className='flex-between mb-6 sm:mb-8'>
-            <Button
-              variant='contained'
-              startIcon={<IoMdArrowBack />}
-              onClick={() => navigate(parentComponent, { state: true })}
-            >
-              Back
-            </Button>
+        <>
+          <div className='text-slate-700 dark:text-slate-300 flex-between mb-6'>
+            <span className='text-lg '>
+              <BsBoxArrowInRight />
+            </span>
 
-            <Button
-              sx={{ display: { xs: 'none', sm: 'flex' }, borderRadius: 3 }}
-              variant='contained'
-              endIcon={<MdFavorite />}
-              onClick={handleSetFavorites}
-            >
-              {charIsFav ? 'Remove from favorites' : 'Add to favorites'}
-            </Button>
+            <p className='text-slate-400 text-[0.7rem] font-medium'>
+              Created in database :
+              <span className='bg-slate-700 px-2 py-0.5 ml-1 rounded-md'>
+                {character && new Date(character.created).toDateString()}
+              </span>
+            </p>
           </div>
 
-          <div className='flex flex-col gap-x-8 sm:flex-row '>
-            <div className='max-w-[300px] flex flex-col gap-4'>
-              <div className='relative overflow-hidden'>
-                <div
-                  className={`bg-blue-200 absolute top-2 left-2 p-1 border border-slate-400 rounded-lg shadow-xl transition-all duration-300 ${
-                    charIsFav
-                      ? 'opacity-100 scale-100 translate-x-0'
-                      : 'opacity-0 scale-50 -translate-x-8'
-                  }`}
-                >
-                  <MdFavorite className='text-red-500 text-xl' />
-                </div>
-
-                <img
-                  className='rounded-xl'
-                  src={character.image}
-                  alt='avatar'
-                />
-              </div>
-
-              <Button
-                sx={{ display: { xs: 'flex', sm: 'none' }, borderRadius: 3 }}
-                variant='contained'
-                endIcon={<MdFavorite />}
-                onClick={handleSetFavorites}
-              >
-                {charIsFav ? 'Remove from favorites' : 'Add to favorites'}
-              </Button>
-            </div>
-
-            <div className='text-slate-700 text-lg font-semibold dark:text-slate-300 mt-6 sm:mt-0'>
+          <div className='flex items-start justify-between gap-8'>
+            <div className='text-slate-700 text-lg font-semibold dark:text-slate-300'>
               <p className='text-3xl font-bold'>{character.name}</p>
 
               <p className='flex-center-1 mt-2'>
@@ -207,9 +179,38 @@ export default function Character() {
                 </Accordion>
               )}
             </div>
+
+            <div className='flex flex-col gap-4'>
+              <div className='relative overflow-hidden'>
+                <div
+                  className={`bg-blue-200 absolute top-2 left-2 p-1 border border-slate-400 rounded-lg shadow-xl transition-all duration-300 ${
+                    charIsFav
+                      ? 'opacity-100 scale-100 translate-x-0'
+                      : 'opacity-0 scale-50 -translate-x-8'
+                  }`}
+                >
+                  <MdFavorite className='text-red-500 text-xl' />
+                </div>
+
+                <img
+                  className='rounded-xl'
+                  src={character.image}
+                  alt='avatar'
+                />
+              </div>
+
+              <Button
+                sx={{ borderRadius: 3 }}
+                variant='contained'
+                endIcon={<MdFavorite />}
+                onClick={handleSetFavorites}
+              >
+                {charIsFav ? 'Remove from favorites' : 'Add to favorites'}
+              </Button>
+            </div>
           </div>
-        </div>
+        </>
       )}
-    </Layout>
+    </div>
   );
 }
